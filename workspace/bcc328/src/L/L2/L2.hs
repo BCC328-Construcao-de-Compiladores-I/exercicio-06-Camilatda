@@ -33,28 +33,63 @@ runWithOptions opts = case opts of
 -- Implement the function to do lexical analysis for L2 programs and outputs the tokens
 
 lexerOnly :: FilePath -> IO ()
-lexerOnly file = error "Not implemented!"
+lexerOnly file = do
+  contents <- readFile file
+  let tokens = alexLexer contents
+  print tokens 
 
 
 -- Implement the function to do syntax analysis for L2 programs and outputs the syntax tree
 
 parserOnly :: FilePath -> IO ()
-parserOnly file = error "Not implemented!"
+parserOnly file = do
+  contents <- readFile file
+  let tokens = alexLexer contents 
+  case parse program "input" tokens of  
+    Left err -> print err  
+    Right ast -> print ast 
+
 
 -- Implement the whole interpreter pipeline: lexical and syntax analysis and then interpret the program
 
 interpret :: FilePath -> IO ()
-interpret file = error "Not implemented!"
+interpret file = do
+  contents <- readFile file
+  let tokens = alexLexer contents  
+  case parse program "input" tokens of 
+    Left err -> print err  
+    Right ast -> do
+      let result = runInterpreter ast
+      print result
+
 
 -- Implement the whole compiler pipeline: lexical, syntax and semantic analysis and then generate v1 instructions from the program.
 
 v1Compiler :: FilePath -> IO ()
-v1Compiler file = error "Not implemented!"
+v1Compiler file = do
+  contents <- readFile file
+  let tokens = alexLexer contents
+  case parse program "input" tokens of 
+    Left err -> print err
+    Right ast -> do
+      let v1Instructions = generateV1Code ast  
+      putStrLn (pretty v1Instructions)  
+
 
 -- Implement the whole executable compiler, using C source and GCC.
 
 cCompiler :: FilePath -> IO ()
-cCompiler file = error "Not implemented!"
+cCompiler file = do
+  contents <- readFile file
+  let tokens = alexLexer contents
+  case parse program "input" tokens of  
+    Left err -> print err
+    Right ast -> do
+      let cCode = generateCCode ast  
+      writeFile "output.c" cCode  
+      _ <- runCommand "gcc -o output output.c"  
+      putStrLn "Executável gerado com sucesso!"
+
 
 -- help message
 

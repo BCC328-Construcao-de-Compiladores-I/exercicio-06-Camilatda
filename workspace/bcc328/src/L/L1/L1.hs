@@ -37,23 +37,43 @@ runWithOptions opts = case opts of
 -- Implement the function to do lexical analysis for L1 programs
 
 alexBasedLexer :: FilePath -> IO ()
-alexBasedLexer file = error "Not implemtented!"
-
+alexBasedLexer file = do
+  contents <- readFile file
+  let tokens = alexLexer contents 
+  print tokens 
 
 -- Implement the function to do syntax analysis using a recursive parser
 
 recursiveParser :: FilePath -> IO ()
-recursiveParser file = error "Not implemented!"
+recursiveParser file = do
+  contents <- readFile file
+  let tokens = alexLexer contents 
+  case parse program "input" tokens of  
+    Left err -> print err  
+    Right ast -> print ast  
 
 -- Implement the LALR parser
 
 lalrParser :: FilePath -> IO ()
-lalrParser file = error "Not implemented!"
+lalrParser file = do
+  contents <- readFile file
+  let tokens = alexLexer contents 
+  case parseLALR program "input" tokens of 
+    Left err -> print err 
+    Right ast -> print ast  
+
 
 -- Implement the V1 code generator
 
 v1Compiler :: FilePath -> IO ()
-v1Compiler file = error "Not implemented!"
+v1Compiler file = do
+  contents <- readFile file
+  let tokens = alexLexer contents
+  case parse program "input" tokens of  
+    Left err -> print err
+    Right ast -> do
+      let v1Instructions = generateV1Code ast  
+      putStrLn (pretty v1Instructions)  
 
 -- help message
 
